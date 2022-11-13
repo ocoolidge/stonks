@@ -21,6 +21,8 @@ class scrambleText {
         }
         const wordnet = new WordNet("./node_modules/wordnet-db/dict");
         return new Promise((resolve, reject) => {
+            console.log("lookup input: " + input)
+            if(input != undefined){
             wordnet.lookup(input, function(result) {
                 //console.log(result)
                 if(result.length > 0 && result[0].ptrs[0] != null && result[0].ptrs != undefined && input!='a'){
@@ -42,7 +44,7 @@ class scrambleText {
                     //console.log(pointer);
                     wordnet.get(pointer.synsetOffset, pointer.pos, function(result2){
                         output = result2.lemma;
-                        console.log(input + " --> " + output);
+                        //console.log(input + " --> " + output);
                         resolve(output)
                     })
                 }else{
@@ -50,6 +52,9 @@ class scrambleText {
                     resolve(input)
                 }
             })
+        }else{
+            resolve("undefined")
+        }
         })
     }
 

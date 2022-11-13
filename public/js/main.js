@@ -20,7 +20,7 @@ window.onscroll = function() {
 function go(){
   console.log("we are ready to go");
   sentimentTimeSeries();
-  getArticle();
+  //getArticle();
   //$("#getRes").click(getArticle);
   document.addEventListener("click", getArticle);
   //document.addEventListener("getRes", getArticle)
@@ -249,12 +249,12 @@ function parseSentimentTimeSeries(response){
           label: 'Graph Line',
           data: data,
           backgroundColor: 'rgba(0, 119, 204, 0.3)'
-       }]
+       }], lineAtIndex: '2022-11-10T04:49:33Z'
     },
     options: {
       maxRotation: 0
     }
   };
   var chart = new Chart(ctx, config);
-  document.getElementById("sentiChartTitle").innerHTML = "Plot of Market Relevent Article Sentiment Around a Significant Rally on Nov 10, 8am EST";
+  document.getElementById("sentiChartTitle").innerHTML = "Market Relevent Article Sentiment Around a Significant Rally on Nov 10, 8am EST";
 }

@@ -18,8 +18,8 @@ class retrieveArticle {
       let articleData = {};
         let rawdata = fs.readFileSync('data/articles/'+fileNumber+'.json');
         articleData = JSON.parse(rawdata);
-        console.log("file: " + fileNumber + " article: " + i);
-        console.log(articleData[i].url)
+        //console.log("file: " + fileNumber + " article: " + i);
+        //console.log(articleData[i].url)
         getArticleBody(articleData[i].url).then(function(article){
           console.log("here")
           if(article != null){
@@ -39,14 +39,14 @@ class retrieveArticle {
       console.log("in getStoredArticle()");
       let articleData = {};
       fs.readdir('data/articles', (err, files) => {
-        fileNumber = Math.floor(Math.random() * files.length-1);
-        console.log(fileNumber)
+        fileNumber = Math.floor((Math.random() * files.length)-1);
+        //console.log(fileNumber)
         let rawdata = fs.readFileSync('data/articles/'+fileNumber+'.json');
         articleData = JSON.parse(rawdata);
-        console.log(fileNumber)
+        //console.log(fileNumber)
         i = Math.floor(Math.random() * articleData.length)
-        console.log("file: " + fileNumber + " article: " + i);
-        console.log(articleData[i].url)
+        //console.log("file: " + fileNumber + " article: " + i);
+        //console.log(articleData[i].url)
         getArticleBody(articleData[i].url).then(function(article){
           console.log("here")
           if(article != null){
