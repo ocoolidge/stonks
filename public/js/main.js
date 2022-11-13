@@ -19,10 +19,12 @@ window.onscroll = function() {
 
 function go(){
   console.log("we are ready to go");
+  sentimentTimeSeries();
+  getArticle();
   //$("#getRes").click(getArticle);
   document.addEventListener("click", getArticle);
-  document.addEventListener("getRes", getArticle)
-  $("#ant").click(generateArticle("!"));
+  //document.addEventListener("getRes", getArticle)
+  //$("#ant").click(generateArticle("!"));
   //document.getElementById("ant").onClick() = generateArticle("!");
    
   // $("#Ant").click(generateArticle("!"));
@@ -32,6 +34,29 @@ function go(){
   // $("#sim").click(generateArticle("&"));
   // $("#Mero").click(generateArticle("#m"));
   // $("#getRes").click(getStockData);
+
+  function sentimentTimeSeries(){
+    console.log("in sentimentTimeSeries()");
+    let mData = {sentiment:"sentiment"};
+    $.ajax({
+      type: "POST",
+      data: JSON.stringify(mData),
+      url:'/getSentimentTimeSeries',
+      processData: false,
+      contentType: "application/json",
+      cache: false,
+      timeout: 600000,
+      success: function (response) {
+        console.log("we had success!");
+        parseSentimentTimeSeries(response)
+        //publishedAtconsole.log(response)
+      },
+      error:function(e){
+        console.log(e);
+        console.log("error occurred");
+      }
+});
+}
 
   function generateArticle(pointerType){
     console.log(pointerType);
@@ -185,7 +210,7 @@ function parseResponse(response){
 
   document.getElementById("articleContainer2").innerHTML = response.result2[0];
   document.getElementById("articleTitle2").innerHTML = response.result2[2];
-  document.getElementById("articleSourceAndDate2").innerHTML = response.result2[1] + "  -  " + response.result2[3];
+  //document.getElementById("articleSourceAndDate2").innerHTML = response.result2[1] + "  -  " + response.result2[3];
   document.getElementById("articleImage2").src = response.result2[5];
 
   //var img = document.createElement('img');
@@ -198,9 +223,38 @@ function parseGeneratedArticle(response){
   console.log(response)
   document.getElementById("articleContainer2").innerHTML = response[0];
   document.getElementById("articleTitle2").innerHTML = response[2];
-  document.getElementById("articleSourceAndDate2").innerHTML = response[1] + "  -  " + response[3];
+  //document.getElementById("articleSourceAndDate2").innerHTML = response[1] + "  -  " + response[3];
   document.getElementById("articleImage2").src = response[5];
 }
 
 
+function parseSentimentTimeSeries(response){
+  var data = new Array(response.length);
+  var labels = new Array(response.length);
+  for(i = 0; i < response.length; i++){
+    data[i] = response[i].titleScore;
+    labels[i] = response[i].publishedAt;
+  }
+  data = data.reverse();
+  labels = labels.reverse();
+  console.log(data)
+  console.log(labels)
 
+  var ctx = document.getElementById("sentiCanvas").getContext('2d');
+  var config = {
+    type: 'line',
+    data: {
+       labels: labels,
+       datasets: [{
+          label: 'Graph Line',
+          data: data,
+          backgroundColor: 'rgba(0, 119, 204, 0.3)'
+       }]
+    },
+    options: {
+      maxRotation: 0
+    }
+  };
+  var chart = new Chart(ctx, config);
+  document.getElementById("sentiChartTitle").innerHTML = "Plot of Market Relevent Article Sentiment Around a Significant Rally on Nov 10, 8am EST";
+}

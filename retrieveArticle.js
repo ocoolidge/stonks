@@ -39,7 +39,8 @@ class retrieveArticle {
       console.log("in getStoredArticle()");
       let articleData = {};
       fs.readdir('data/articles', (err, files) => {
-        fileNumber = files.length;
+        fileNumber = Math.floor(Math.random() * files.length-1);
+        console.log(fileNumber)
         let rawdata = fs.readFileSync('data/articles/'+fileNumber+'.json');
         articleData = JSON.parse(rawdata);
         console.log(fileNumber)

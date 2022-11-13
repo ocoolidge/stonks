@@ -18,6 +18,7 @@ const nlp = require('node-nlp');
 const natural = require('natural');
 const Chart = require('chart.js');
 const fs = require('fs');
+const Sentiment = require('sentiment');
 const { dockStart } = require('@nlpjs/basic');
 const { getEnvironmentData } = require('worker_threads');
 const { resolve } = require('path');
@@ -57,10 +58,17 @@ httpServer.listen(portNumber, function(){
 
 let searchHistory = new Array();
 
+app.post('/getSentimentTimeSeries', handleSentimentPost)
 app.post('/getArticle', handleArticlePost2);
 app.post('/getGeneratedArticle', generateArticle);
 //app.post('/getArticle2', handleArticlePost2);
 app.post('/getStockData', handleStockPost);
+
+function handleSentimentPost(request, response){
+  articleSentimentTimeSeries().then(function (result){
+    response.send(result);
+  })
+}
 
 function generateArticle(request,response){
   console.log("in generateArticle Pointer: " + request.body.pointerT)
@@ -139,6 +147,42 @@ function handleArticlePost2(request,response){
         response.send(final);
       } 
     })
+}
+
+function articleSentimentTimeSeries(){
+  return new Promise((resolve, reject)  => {
+    var sentimentTimeSeries = [];
+    for(i = 20; i < 20+12; i++){
+    fs.readFile("data/articles/NOV10Rally08am/"+i+".json", "utf8", (err, jsonString) => {
+      if (err) {
+        console.log("File read failed:", err);
+        return;
+      }
+      let articles = JSON.parse(jsonString)
+      var sentiment = new Sentiment();
+      
+      
+      for(j = 0; j < articles.length; j++){
+        articles[j].titleScore = sentiment.analyze(articles[j].title).score;
+        //articles[i].descriptionScore = sentiment.analyze(articles[i].title);
+        //articles[i].contentScore = sentiment.analyze(articles[i].content.split('\r'));
+        //articles[i].totalScore = parseInt(articles[i].descriptionScore) + parseInt(articles[i].titleScore)// + articles[i].contentScore
+        //console.log(articles[i].titleScore.score + "  " + articles[i].title)
+        //console.log(articles[i].descriptionScore.score + "  " + articles[i].description) 
+        //console.log(articles[j].publishedAt + " " + articles[j].titleScore.score + " " + articles[j].title)
+        sentimentTimeSeries.push(articles[j])
+        //sentimentTimeSeries[articles[j].publishedAt] = {}
+        //sentimentTimeSeries[articles[j].publishedAt].titleSentiment = articles[j].titleScore.score
+        if(j >= articles.length - 1 && i >= 20+12-1){
+          console.log(sentimentTimeSeries)
+          resolve(sentimentTimeSeries);
+        }
+      }
+      //console.log(articles[1].publishedAt)
+      //console.log(articles);
+    });
+  }
+})
 }
 
 function handleArticlePost(request,response){

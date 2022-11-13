@@ -115,6 +115,12 @@ input[type='button']{
 }
 .resCritRes{
   padding-left:15%;
+}.lower{
+  width: 80%;
+  margin-left: 7.5%;
+  margin-top: 50px;
+}#sentiCanvas{
+  
 }
 #resultsContainerPos{
   background:#ebebfa;
