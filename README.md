@@ -1,4 +1,4 @@
 # stonks
 stocks, news, prediction, text generation
 
-![Alt text](img.jpg?raw=true "Title")
+![Alt text](img.png?raw=true "Title")
